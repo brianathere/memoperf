@@ -6,6 +6,6 @@ const BenchmarkNormal = ({ level, updateCount }: {level: number; updateCount: nu
         next();
       }
       const prime = next();
-  return <div>Benchmark level: {prime} ${updateCount}</div>;
+  return <div>Benchmark normal prime: {prime} {updateCount}</div>;
 };
 export default BenchmarkNormal;

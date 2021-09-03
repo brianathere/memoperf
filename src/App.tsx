@@ -1,11 +1,11 @@
 import React, { Profiler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BenchmarkNormal from "./BenchmarkNormal";
 import BenchmarkMemo from "./BenchmarkMemo";
-import BenchmarkNoop from "./BenchmarkNoop";
+import { BenchmarkNoop, BenchmarkNoopMemo } from "./BenchmarkNoop";
 import { eratosthenesSieve } from "./eratosthenes";
 
-function Benchmark({ level, runName, setResults }: { level: number; runName: "noop" | "normal" | "memo"; setResults:  React.Dispatch<React.SetStateAction<number[]>> }) {
-  const timesToUpdate = 10;
+function Benchmark({ level, prime, runName, setResults }: { level: number; prime: number; runName: "noop" | "noopMemo" | "normal" | "memo"; setResults:  React.Dispatch<React.SetStateAction<number[]>> }) {
+  const timesToUpdate = 100;
   const results = useRef<number[]>([]);
   const [updateCount, setUpdateCount] = useState<number>(0);
   
@@ -35,7 +35,11 @@ function Benchmark({ level, runName, setResults }: { level: number; runName: "no
           </div>
         ) : runName === "noop" ? (
           <div key={`${runName}`} >
-            <BenchmarkNoop level={level} updateCount={updateCount} />
+            <BenchmarkNoop level={level} updateCount={updateCount} prime={prime} />
+          </div>
+        ) : runName === "noopMemo" ? (
+          <div key={`${runName}`} >
+            <BenchmarkNoopMemo level={level} updateCount={updateCount} prime={prime}/>
           </div>
         ) : (
           <div  key={`${runName}`}>
@@ -48,6 +52,7 @@ function Benchmark({ level, runName, setResults }: { level: number; runName: "no
 }
 export function App() {
   const [noopResults, setNoopResults] = useState<number[]>([]);
+  const [noopMemoResults, setNoopMemoResults] = useState<number[]>([]);
   const [normalResults, setNormalResults] = useState<number[]>([]);
   const [memoResults, setMemoResults] = useState<number[]>([]);
   const level = 500000;
@@ -68,6 +73,9 @@ export function App() {
         {`Noop results = ${noopResults.length > 0 ? noopResults.reduce((a, b) => a + b) / noopResults.length : "NA"} ms`}
       </div>
       <div>
+        {`NoopMemo results = ${noopMemoResults.length > 0 ? noopMemoResults.reduce((a, b) => a + b) / noopMemoResults.length : "NA"} ms`}
+      </div>
+      <div>
         {`Normal results = ${normalResults.length > 0 ? normalResults.reduce((a, b) => a + b) / normalResults.length : "NA"} ms`}
       </div>
       <div>
@@ -75,9 +83,10 @@ export function App() {
       </div>
 
       <div style={{ display: "inline"}}>
-        <Benchmark key={"memo"} level={level} setResults={setMemoResults} runName={"memo"} />
-        <Benchmark key={"noop"} level={level} setResults={setNoopResults} runName={"noop"} />
-        <Benchmark key={"normal"} level={level} setResults={setNormalResults} runName={"normal"} />
+        <Benchmark key={"noop"} level={level} prime={prime} setResults={setNoopResults} runName={"noop"} />
+        <Benchmark key={"noopMemo"} level={level} prime={prime} setResults={setNoopMemoResults} runName={"noopMemo"} />
+        <Benchmark key={"memo"} level={level} prime={prime} setResults={setMemoResults} runName={"memo"} />
+        <Benchmark key={"normal"} level={level} prime={prime} setResults={setNormalResults} runName={"normal"} />
       </div>
     </div>
   );

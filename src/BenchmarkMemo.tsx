@@ -8,6 +8,6 @@ const BenchmarkMemo = ({ level, updateCount }: {level: number; updateCount: numb
     }
     return next();
   }, [level]);
-  return <div>Benchmark with memo level: {prime} ${updateCount}</div>;
+  return <div>Benchmark with memo prime: {prime} {updateCount}</div>;
 };
 export default BenchmarkMemo;
