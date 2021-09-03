@@ -20,7 +20,7 @@ function Benchmark({ level, prime, runName, setResults }: { level: number; prime
   }, [setResults, updateCount]);
   // Callback for our profiler
   const renderProfiler: React.ProfilerOnRenderCallback = useCallback((...args) => {
-    results.current.push(args[3]);
+    results.current.push(args[2]);
   }, []);
 
   return (
@@ -55,31 +55,36 @@ export function App() {
   const [noopMemoResults, setNoopMemoResults] = useState<number[]>([]);
   const [normalResults, setNormalResults] = useState<number[]>([]);
   const [memoResults, setMemoResults] = useState<number[]>([]);
+  const primeTime = useRef<number>(0);
   const level = 500000;
   // Run this once before starting to let the JIT get a shot
   const prime = useMemo(() => {
+    const start = performance.now();
     const next = eratosthenesSieve();
     for (let i = 0; i < level; ++i) {
       next();
     }
+    const stop = performance.now();
+    primeTime.current = stop - start;
+
     return next();
   }, [level]);
 
 
   return (
     <div>
-      {`Prime: ${prime}`}
+      {`Prime: ${prime} ${primeTime.current} ms`}
       <div>
-        {`Noop results = ${noopResults.length > 0 ? noopResults.reduce((a, b) => a + b) / noopResults.length : "NA"} ms`}
+        {`Noop results = ${noopResults.length > 0 ? noopResults.reduce((a, b) => a + b) : "NA"} ms`}
       </div>
       <div>
-        {`NoopMemo results = ${noopMemoResults.length > 0 ? noopMemoResults.reduce((a, b) => a + b) / noopMemoResults.length : "NA"} ms`}
+        {`NoopMemo results = ${noopMemoResults.length > 0 ? noopMemoResults.reduce((a, b) => a + b) : "NA"} ms`}
       </div>
       <div>
-        {`Normal results = ${normalResults.length > 0 ? normalResults.reduce((a, b) => a + b) / normalResults.length : "NA"} ms`}
+        {`Normal results = ${normalResults.length > 0 ? normalResults.reduce((a, b) => a + b) : "NA"} ms`}
       </div>
       <div>
-        {`Memo results = ${memoResults.length > 0 ? memoResults.reduce((a, b) => a + b) / memoResults.length : "NA"} ms`}
+        {`Memo results = ${memoResults.length > 0 ? memoResults.reduce((a, b) => a + b) : "NA"} ms`}
       </div>
 
       <div style={{ display: "inline"}}>
